@@ -231,7 +231,7 @@ section{padding:100px 0;}
 }
 .card-featured ul li{color:rgba(255,255,255,.85);}
 .card ul li::before{
-  content:"✔";
+  content:"✓";
   position:absolute;
   left:0;
   color:var(--green);
