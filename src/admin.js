@@ -7,7 +7,7 @@ function showToast(msg, type = 'success') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const icons = { success: '✔', error: '✕', info: 'ℹ' };
   toast.innerHTML = `<span>${icons[type] || ''}</span><span>${msg}</span>`;
   container.appendChild(toast);
   setTimeout(() => {
@@ -184,7 +184,7 @@ async function uploadFeatured(file) {
         <img src="${data.url}" alt="Featured">
         <button class="remove" onclick="document.getElementById('featuredPreview').innerHTML='';document.getElementById('image_url').value='';">×</button>
       </div>`;
-    showToast('✅ Slika uspešno uploadovana!', 'success');
+    showToast('Slika uspešno uploadovana!', 'success');
   } catch {
     showToast('Greška pri upload-u slike.', 'error');
   }
@@ -212,7 +212,7 @@ async function uploadInlineImage() {
     editor.focus();
     const img = `<img src="${data.url}" alt="Slika" style="max-width:100%;border-radius:10px;">`;
     document.execCommand('insertHTML', false, img);
-    showToast('✅ Slika ubačena!', 'success');
+    showToast('Slika ubačena!', 'success');
   } catch {
     showToast('Greška pri upload-u slike.', 'error');
   }
@@ -330,7 +330,7 @@ async function savePost(published) {
     const data = await res.json();
     if (!res.ok) { showToast(data.error, 'error'); return; }
 
-    showToast(editingId ? '✅ Članak ažuriran!' : '✅ Članak objavljen!', 'success');
+    showToast(editingId ? 'Članak ažuriran!' : 'Članak objavljen!', 'success');
     resetForm();
     if (document.getElementById('page-dashboard').style.display !== 'none') {
       loadDashboardStats(); loadRecentPosts();
@@ -395,7 +395,7 @@ async function deletePostById(id) {
   try {
     const res = await fetch(`${API}/api/admin/posts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) { showToast('Greška pri brisanju.', 'error'); return; }
-    showToast('🗑️ Članak obrisan.', 'info');
+    showToast('Članak obrisan.', 'info');
     loadDashboardStats(); loadRecentPosts(); loadAllPosts();
   } catch { showToast('Greška pri brisanju.', 'error'); }
 }
