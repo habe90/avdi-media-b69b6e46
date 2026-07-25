@@ -9,7 +9,17 @@ async function loadPost() {
     const res = await fetch(`${API}/api/posts/${slug}`);
     if (!res.ok) { showError(); return; }
     const { post } = await res.json();
-    document.title = `${post.title} | Avdić Media`;
+    document.title = post.meta_title || `${post.title} | Avdić Media`;
+    if (post.meta_description) {
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', post.meta_description);
+      else {
+        const meta = document.createElement('meta');
+        meta.name = 'description';
+        meta.content = post.meta_description;
+        document.head.appendChild(meta);
+      }
+    }
     content.innerHTML = `
       <h1>${escapeHtml(post.title)}</h1>
       <div class="post-meta">
