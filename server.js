@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
 
 const { Pool } = pkg;
 const __filename = fileURLToPath(import.meta.url);
@@ -52,15 +51,17 @@ await pool.query(`
   )
 `);
 
-// --- Image upload ---
-const uploadsDir = join(__dirname, 'dist', 'uploads');
-if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
+// --- Images table (persistent, survives deploys) ---
+await pool.query(`
+  CREATE TABLE IF NOT EXISTS images (
+    id SERIAL PRIMARY KEY,
+    data TEXT NOT NULL,
+    mime TEXT NOT NULL DEFAULT 'image/jpeg',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  )
+`);
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadsDir),
-  filename: (_req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '_'))
-});
-const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 // --- Auth middleware ---
 function auth(req, res, next) {
@@ -232,9 +233,34 @@ app.delete('/api/admin/posts/:id', auth, async (req, res) => {
 });
 
 // --- UPLOAD ---
-app.post('/api/upload', auth, upload.single('image'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'Fajl nije uploadovan.' });
-  res.json({ url: '/uploads/' + req.file.filename });
+app.post('/api/upload', auth, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Fajl nije uploadovan.' });
+    const b64 = req.file.buffer.toString('base64');
+    const mime = req.file.mimetype || 'image/jpeg';
+    const r = await pool.query(
+      'INSERT INTO images (data, mime) VALUES ($1, $2) RETURNING id',
+      [b64, mime]
+    );
+    res.json({ url: '/api/image/' + r.rows[0].id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Greška pri upload-u.' });
+  }
+});
+
+// Serve images from DB
+app.get('/api/image/:id', async (req, res) => {
+  try {
+    const r = await pool.query('SELECT data, mime FROM images WHERE id = $1', [req.params.id]);
+    if (r.rows.length === 0) return res.status(404).end();
+    const img = Buffer.from(r.rows[0].data, 'base64');
+    res.setHeader('Content-Type', r.rows[0].mime);
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    res.send(img);
+  } catch {
+    res.status(500).end();
+  }
 });
 
 // --- Root route ---
