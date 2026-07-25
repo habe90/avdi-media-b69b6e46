@@ -3,43 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prijava | Avdić Media</title>
+<title>Prijava | Avdić Media CMS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
 <style>
-  .auth-page { min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--light-bg); padding:24px; }
-  .auth-card { background:var(--white); padding:40px 36px; border-radius:var(--radius); box-shadow:var(--shadow); width:100%; max-width:440px; }
-  .auth-card h2 { font-size:24px; margin-bottom:8px; }
-  .auth-card .sub { color:var(--gray); margin-bottom:28px; font-size:14px; }
-  .auth-card .field { margin-bottom:18px; }
-  .auth-card label { display:block; margin-bottom:6px; font-weight:500; font-size:14px; }
-  .auth-card input { width:100%; padding:12px 14px; border:1px solid rgba(0,0,0,.12); border-radius:10px; font-family:inherit; font-size:14px; }
-  .auth-card input:focus { outline:none; border-color:var(--green); }
-  .auth-card .btn { width:100%; text-align:center; margin-top:8px; }
-  .auth-card .alt { text-align:center; margin-top:18px; font-size:14px; color:var(--gray); }
-  .auth-card .alt a { color:var(--green); font-weight:600; }
-  .auth-msg { text-align:center; font-size:14px; min-height:20px; margin-bottom:8px; }
-  .auth-msg.error { color:#e74c3c; }
-  .auth-msg.success { color:var(--green); }
-  .logo-link { display:block; text-align:center; margin-bottom:24px; }
-  .logo-link .logo { font-weight:800; font-size:22px; color:var(--dark); }
-  .logo-link .logo span { color:var(--green); }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Poppins',sans-serif;background:#f1f5f9;min-height:100vh;display:flex;}
+  .auth-split{display:flex;width:100%;min-height:100vh;}
+  .auth-left{flex:1;background:linear-gradient(135deg,#1a1d1e 0%,#26292b 100%);display:flex;align-items:center;justify-content:center;padding:60px;color:#fff;position:relative;overflow:hidden;}
+  .auth-left::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(29,185,84,.2),transparent 50%),radial-gradient(circle at 70% 60%,rgba(29,185,84,.15),transparent 50%);}
+  .auth-left-content{position:relative;z-index:1;max-width:440px;}
+  .auth-left-content .logo-text{font-weight:800;font-size:32px;margin-bottom:8px;}
+  .auth-left-content .logo-text span{color:#1db954;}
+  .auth-left-content h2{font-size:28px;margin-bottom:16px;line-height:1.3;}
+  .auth-left-content p{color:rgba(255,255,255,.65);font-size:15px;line-height:1.7;}
+  .auth-left-content .features{margin-top:32px;display:flex;flex-direction:column;gap:14px;}
+  .auth-left-content .features div{display:flex;align-items:center;gap:12px;font-size:14px;color:rgba(255,255,255,.8);}
+  .auth-left-content .features div span{width:28px;height:28px;background:rgba(29,185,84,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#1db954;}
+  .auth-right{flex:1;display:flex;align-items:center;justify-content:center;padding:60px;background:#fff;}
+  .auth-card{width:100%;max-width:400px;}
+  .auth-card h3{font-size:24px;margin-bottom:6px;color:#1a1d1e;}
+  .auth-card .sub{color:#6b7280;margin-bottom:28px;font-size:14px;}
+  .auth-card .field{margin-bottom:18px;}
+  .auth-card label{display:block;margin-bottom:6px;font-weight:500;font-size:13px;color:#374151;}
+  .auth-card input{width:100%;padding:12px 14px;border:1px solid #d1d5db;border-radius:10px;font-family:inherit;font-size:14px;background:#fafbfc;transition:.2s;}
+  .auth-card input:focus{outline:none;border-color:#1db954;background:#fff;box-shadow:0 0 0 3px rgba(29,185,84,.1);}
+  .auth-card .btn{width:100%;padding:13px;background:#1db954;color:#fff;border:none;border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;font-family:inherit;transition:.2s;}
+  .auth-card .btn:hover{background:#149c46;}
+  .auth-card .alt{text-align:center;margin-top:20px;font-size:14px;color:#6b7280;}
+  .auth-card .alt a{color:#1db954;font-weight:600;text-decoration:none;}
+  .auth-card .alt a:hover{text-decoration:underline;}
+  .auth-msg{text-align:center;font-size:14px;min-height:20px;margin-bottom:8px;}
+  .auth-msg.error{color:#e74c3c;background:rgba(231,76,60,.08);padding:10px;border-radius:8px;}
+  .auth-msg.success{color:#1db954;}
+  .back-home{display:inline-block;margin-bottom:24px;color:#6b7280;font-size:13px;text-decoration:none;}
+  .back-home:hover{color:#1a1d1e;}
+  @media(max-width:768px){.auth-split{flex-direction:column;}.auth-left{display:none;}.auth-right{padding:40px 24px;}}
 </style>
 </head>
 <body>
-<div class="auth-page">
-  <div class="auth-card">
-    <a href="/" class="logo-link"><span class="logo">Avdić<span>Media</span></span></a>
-    <h2>Prijava</h2>
-    <p class="sub">Unesite svoje podatke za pristup CMS-u</p>
-    <div class="auth-msg" id="msg"></div>
-    <div class="field"><label>Email</label><input type="email" id="email" placeholder="vas@email.com"></div>
-    <div class="field"><label>Lozinka</label><input type="password" id="password" placeholder="••••••••"></div>
-    <button class="btn btn-primary" id="loginBtn">Prijavi se</button>
-    <p class="alt">Nemate nalog? <a href="/register.html">Registrujte se</a></p>
+
+<div class="auth-split">
+  <div class="auth-left">
+    <div class="auth-left-content">
+      <div class="logo-text">Avdić<span>Media</span></div>
+      <h2>CMS Panel za upravljanje sadržajem</h2>
+      <p>Prijavite se da biste upravljali blogom, člancima i sadržajem vašeg sajta.</p>
+      <div class="features">
+        <div><span>✓</span> Kreirajte i uređujte blog članke</div>
+        <div><span>✓</span> Pregled statistike i objava</div>
+        <div><span>✓</span> Upravljajte sadržajem u realnom vremenu</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <a href="/" class="back-home">← Nazad na sajt</a>
+      <h3>Dobro došli nazad</h3>
+      <p class="sub">Unesite podatke za pristup CMS panelu</p>
+      <div class="auth-msg" id="msg"></div>
+      <div class="field"><label>Email adresa</label><input type="email" id="email" placeholder="vas@email.com"></div>
+      <div class="field"><label>Lozinka</label><input type="password" id="password" placeholder="••••••••"></div>
+      <button class="btn" id="loginBtn">Prijavi se</button>
+      <p class="alt">Nemate nalog? <a href="/register.html">Registrujte se</a></p>
+    </div>
   </div>
 </div>
+
 <script type="module" src="src/login.js"></script>
 </body>
 </html>
