@@ -163,6 +163,8 @@ async function savePost(published) {
   const content = document.getElementById('content').value.trim();
   const excerpt = document.getElementById('excerpt').value.trim();
   const image_url = document.getElementById('image_url').value.trim();
+  const meta_title = document.getElementById('meta_title').value.trim();
+  const meta_description = document.getElementById('meta_description').value.trim();
   const msg = document.getElementById('formMsg');
   msg.className = 'msg';
   msg.style.display = 'none';
@@ -172,7 +174,7 @@ async function savePost(published) {
     msg.className = 'msg error'; return;
   }
 
-  const body = { title, content, excerpt, image_url, published: published ? 1 : 0 };
+  const body = { title, content, excerpt, image_url, meta_title, meta_description, published: published ? 1 : 0 };
   const url = editingId ? `${API}/api/admin/posts/${editingId}` : `${API}/api/admin/posts`;
   const method = editingId ? 'PUT' : 'POST';
 
@@ -207,6 +209,8 @@ function editPostById(posts, id) {
   document.getElementById('content').value = post.content;
   document.getElementById('excerpt').value = post.excerpt || '';
   document.getElementById('image_url').value = post.image_url || '';
+  document.getElementById('meta_title').value = post.meta_title || '';
+  document.getElementById('meta_description').value = post.meta_description || '';
   document.getElementById('formTitle').textContent = '✏️ Uredi članak';
   document.getElementById('cancelBtn').style.display = 'inline-flex';
   document.getElementById('pageTitle').textContent = 'Uredi članak';
@@ -224,6 +228,8 @@ function resetForm() {
   document.getElementById('content').value = '';
   document.getElementById('excerpt').value = '';
   document.getElementById('image_url').value = '';
+  document.getElementById('meta_title').value = '';
+  document.getElementById('meta_description').value = '';
   document.getElementById('formTitle').textContent = '✍️ Novi članak';
   document.getElementById('cancelBtn').style.display = 'none';
   document.getElementById('pageTitle').textContent = 'Novi članak';
