@@ -2,7 +2,21 @@ const API = '';
 const token = localStorage.getItem('avdic_token');
 let user = null;
 
-// --- AUTH CHECK ---
+// --- TOAST ---
+function showToast(msg, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  toast.innerHTML = `<span>${icons[type] || ''}</span><span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'slideOut .3s ease forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// --- AUTH ---
 async function checkAuth() {
   if (!token) { redirectLogin(); return; }
   try {
@@ -32,8 +46,8 @@ function initUI() {
   document.getElementById('sidebarAvatar').textContent = user.name.charAt(0).toUpperCase();
   document.getElementById('sidebarName').textContent = user.name;
   document.getElementById('sidebarEmail').textContent = user.email;
-  
-  // Navigation
+
+  // Sidebar nav
   document.querySelectorAll('.sidebar-nav a[data-page]').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
@@ -43,41 +57,174 @@ function initUI() {
       link.classList.add('active');
     });
   });
-  
-  // New post button in posts list
+
   document.getElementById('gotoNewPost').addEventListener('click', () => {
     switchPage('new-post');
     document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
     document.querySelector('.sidebar-nav a[data-page="new-post"]').classList.add('active');
   });
-  
-  // Save post
+
+  // Save
   document.getElementById('saveBtn').addEventListener('click', () => savePost(true));
   document.getElementById('saveDraftBtn').addEventListener('click', () => savePost(false));
   document.getElementById('cancelBtn').addEventListener('click', resetForm);
-  
+
   // Logout
   document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('avdic_token');
     localStorage.removeItem('avdic_user');
     window.location.href = '/login.html';
   });
-  
-  // Mobile toggle
+
+  // Mobile
   document.getElementById('mobileToggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
   });
-  
+
+  // Editor toolbar
+  initEditor();
+
+  // Featured image upload
+  initFeaturedUpload();
+
+  // Inline image upload
+  document.getElementById('btnInsertImage').addEventListener('click', () => {
+    document.getElementById('inlineImageInput').click();
+  });
+  document.getElementById('inlineImageInput').addEventListener('change', uploadInlineImage);
+
   // Load dashboard
   switchPage('dashboard');
 }
 
+// --- RICH TEXT EDITOR ---
+function initEditor() {
+  const editor = document.getElementById('editor');
+  const toolbar = document.getElementById('toolbar');
+
+  toolbar.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    e.preventDefault();
+    const cmd = btn.dataset.cmd;
+    const val = btn.dataset.val;
+
+    if (cmd === 'createLink') {
+      const url = prompt('Unesite URL:');
+      if (url) document.execCommand(cmd, false, url);
+      return;
+    }
+    if (cmd === 'formatBlock') {
+      document.execCommand(cmd, false, `<${val}>`);
+      return;
+    }
+    document.execCommand(cmd, false, null);
+    editor.focus();
+  });
+
+  // Update toolbar active states
+  editor.addEventListener('keyup', updateToolbar);
+  editor.addEventListener('mouseup', updateToolbar);
+}
+
+function updateToolbar() {
+  document.querySelectorAll('#toolbar button[data-cmd]').forEach(btn => {
+    const cmd = btn.dataset.cmd;
+    if (cmd === 'createLink' || cmd === 'insertUnorderedList' || cmd === 'insertOrderedList') {
+      btn.classList.toggle('active', document.queryCommandState(cmd));
+    } else if (cmd === 'formatBlock') {
+      const val = btn.dataset.val;
+      const block = document.queryCommandValue('formatBlock');
+      btn.classList.toggle('active', block && block.toLowerCase() === val);
+    } else if (cmd === 'bold' || cmd === 'italic') {
+      btn.classList.toggle('active', document.queryCommandState(cmd));
+    }
+  });
+}
+
+// --- IMAGE UPLOAD (FEATURED) ---
+let featuredUrl = '';
+
+function initFeaturedUpload() {
+  const zone = document.getElementById('featuredUpload');
+  const input = document.getElementById('featuredInput');
+  const preview = document.getElementById('featuredPreview');
+
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.borderColor = '#1db954'; });
+  zone.addEventListener('dragleave', () => { zone.style.borderColor = '#d1d5db'; });
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.style.borderColor = '#d1d5db';
+    const file = e.dataTransfer.files[0];
+    if (file) uploadFeatured(file);
+  });
+  input.addEventListener('change', () => {
+    if (input.files[0]) uploadFeatured(input.files[0]);
+  });
+}
+
+async function uploadFeatured(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const res = await fetch(`${API}/api/upload`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error || 'Greška pri upload-u.', 'error'); return; }
+
+    featuredUrl = data.url;
+    document.getElementById('image_url').value = data.url;
+    document.getElementById('featuredPreview').innerHTML = `
+      <div class="thumb">
+        <img src="${data.url}" alt="Featured">
+        <button class="remove" onclick="document.getElementById('featuredPreview').innerHTML='';document.getElementById('image_url').value='';">×</button>
+      </div>`;
+    showToast('✅ Slika uspešno uploadovana!', 'success');
+  } catch {
+    showToast('Greška pri upload-u slike.', 'error');
+  }
+}
+
+// --- INLINE IMAGE UPLOAD ---
+async function uploadInlineImage() {
+  const input = document.getElementById('inlineImageInput');
+  if (!input.files[0]) return;
+  const file = input.files[0];
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const res = await fetch(`${API}/api/upload`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast(data.error || 'Greška pri upload-u.', 'error'); return; }
+
+    // Insert image at cursor
+    const editor = document.getElementById('editor');
+    editor.focus();
+    const img = `<img src="${data.url}" alt="Slika" style="max-width:100%;border-radius:10px;">`;
+    document.execCommand('insertHTML', false, img);
+    showToast('✅ Slika ubačena!', 'success');
+  } catch {
+    showToast('Greška pri upload-u slike.', 'error');
+  }
+  input.value = '';
+}
+
 // --- PAGE SWITCHING ---
 function switchPage(page) {
-  ['dashboard','posts','new-post'].forEach(p => {
+  ['dashboard', 'posts', 'new-post'].forEach(p => {
     document.getElementById(`page-${p}`).style.display = p === page ? 'block' : 'none';
   });
-  
+
   if (page === 'dashboard') {
     document.getElementById('pageTitle').textContent = 'Dashboard';
     document.getElementById('breadcrumb').textContent = 'Pregled statistike';
@@ -115,7 +262,7 @@ async function loadRecentPosts() {
     const empty = document.getElementById('emptyRecent');
     if (!posts.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
     empty.style.display = 'none';
-    tbody.innerHTML = posts.slice(0,5).map(p => `
+    tbody.innerHTML = posts.slice(0, 5).map(p => `
       <tr>
         <td><strong>${escapeHtml(p.title)}</strong></td>
         <td><span class="badge ${p.published ? 'badge-pub' : 'badge-draft'}">${p.published ? 'Objavljen' : 'Skica'}</span></td>
@@ -160,18 +307,15 @@ let editingId = null;
 
 async function savePost(published) {
   const title = document.getElementById('title').value.trim();
-  const content = document.getElementById('content').value.trim();
+  const content = document.getElementById('editor').innerHTML.trim();
   const excerpt = document.getElementById('excerpt').value.trim();
   const image_url = document.getElementById('image_url').value.trim();
   const meta_title = document.getElementById('meta_title').value.trim();
   const meta_description = document.getElementById('meta_description').value.trim();
-  const msg = document.getElementById('formMsg');
-  msg.className = 'msg';
-  msg.style.display = 'none';
 
-  if (!title || !content) {
-    msg.textContent = 'Naslov i sadržaj su obavezni.';
-    msg.className = 'msg error'; return;
+  if (!title || !content || content === '<br>') {
+    showToast('Naslov i sadržaj su obavezni.', 'error');
+    return;
   }
 
   const body = { title, content, excerpt, image_url, meta_title, meta_description, published: published ? 1 : 0 };
@@ -184,19 +328,16 @@ async function savePost(published) {
       body: JSON.stringify(body)
     });
     const data = await res.json();
-    if (!res.ok) { msg.textContent = data.error; msg.className = 'msg error'; return; }
+    if (!res.ok) { showToast(data.error, 'error'); return; }
 
-    msg.textContent = editingId ? '✅ Članak uspešno ažuriran!' : '✅ Članak uspešno objavljen!';
-    msg.className = 'msg success';
+    showToast(editingId ? '✅ Članak ažuriran!' : '✅ Članak objavljen!', 'success');
     resetForm();
-    setTimeout(() => { msg.style.display = 'none'; }, 3000);
-    
     if (document.getElementById('page-dashboard').style.display !== 'none') {
       loadDashboardStats(); loadRecentPosts();
     }
     if (document.getElementById('page-posts').style.display !== 'none') loadAllPosts();
   } catch {
-    msg.textContent = 'Greška pri čuvanju.'; msg.className = 'msg error';
+    showToast('Greška pri čuvanju.', 'error');
   }
 }
 
@@ -206,16 +347,27 @@ function editPostById(posts, id) {
   editingId = post.id;
   document.getElementById('editId').value = post.id;
   document.getElementById('title').value = post.title;
-  document.getElementById('content').value = post.content;
+  document.getElementById('editor').innerHTML = post.content;
   document.getElementById('excerpt').value = post.excerpt || '';
   document.getElementById('image_url').value = post.image_url || '';
   document.getElementById('meta_title').value = post.meta_title || '';
   document.getElementById('meta_description').value = post.meta_description || '';
+
+  // Show existing featured image
+  if (post.image_url) {
+    featuredUrl = post.image_url;
+    document.getElementById('featuredPreview').innerHTML = `
+      <div class="thumb">
+        <img src="${post.image_url}" alt="Featured">
+        <button class="remove" onclick="document.getElementById('featuredPreview').innerHTML='';document.getElementById('image_url').value='';">×</button>
+      </div>`;
+  }
+
   document.getElementById('formTitle').textContent = '✏️ Uredi članak';
   document.getElementById('cancelBtn').style.display = 'inline-flex';
   document.getElementById('pageTitle').textContent = 'Uredi članak';
   document.getElementById('breadcrumb').textContent = 'Izmena postojećeg članka';
-  
+
   switchPage('new-post');
   document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
   document.querySelector('.sidebar-nav a[data-page="new-post"]').classList.add('active');
@@ -225,24 +377,27 @@ function resetForm() {
   editingId = null;
   document.getElementById('editId').value = '';
   document.getElementById('title').value = '';
-  document.getElementById('content').value = '';
+  document.getElementById('editor').innerHTML = '';
   document.getElementById('excerpt').value = '';
   document.getElementById('image_url').value = '';
   document.getElementById('meta_title').value = '';
   document.getElementById('meta_description').value = '';
+  document.getElementById('featuredPreview').innerHTML = '';
+  featuredUrl = '';
   document.getElementById('formTitle').textContent = '✍️ Novi članak';
   document.getElementById('cancelBtn').style.display = 'none';
   document.getElementById('pageTitle').textContent = 'Novi članak';
   document.getElementById('breadcrumb').textContent = 'Kreirajte novi blog post';
-  document.getElementById('formMsg').style.display = 'none';
 }
 
 async function deletePostById(id) {
   if (!confirm('Sigurno želite obrisati ovaj članak? Ova akcija je nepovratna.')) return;
   try {
-    await fetch(`${API}/api/admin/posts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    const res = await fetch(`${API}/api/admin/posts/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) { showToast('Greška pri brisanju.', 'error'); return; }
+    showToast('🗑️ Članak obrisan.', 'info');
     loadDashboardStats(); loadRecentPosts(); loadAllPosts();
-  } catch { alert('Greška pri brisanju.'); }
+  } catch { showToast('Greška pri brisanju.', 'error'); }
 }
 
 function escapeHtml(s) {
