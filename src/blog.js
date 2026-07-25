@@ -10,7 +10,7 @@ async function loadPosts() {
     grid.innerHTML = data.posts.map(p => {
       const imgHtml = p.image_url
         ? `<div class="post-card-img"><img src="${p.image_url}" alt="${escapeHtml(p.title)}" loading="lazy"></div>`
-        : `<div class="post-card-img no-img">📰</div>`;
+        : `<div class="post-card-img no-img"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>`;
       return `
       <article class="post-card">
         ${imgHtml}
