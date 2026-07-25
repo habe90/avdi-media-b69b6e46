@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ba">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Članak | Avdić Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .post-page { padding:140px 0 100px; min-height:100vh; }
+  .post-container { max-width:780px; margin:0 auto; }
+  .post-container h1 { font-size:clamp(24px,4vw,34px); margin-bottom:12px; }
+  .post-meta { color:var(--gray); font-size:14px; margin-bottom:32px; display:flex; gap:16px; flex-wrap:wrap; }
+  .post-meta span { color:var(--green); font-weight:600; }
+  .post-content { font-size:16px; line-height:1.8; color:var(--dark-2); }
+  .post-content p { margin-bottom:18px; }
+  .back-link { display:inline-block; margin-bottom:28px; color:var(--green); font-weight:600; font-size:14px; }
+  .back-link:hover { text-decoration:underline; }
+  .post-error { text-align:center; padding:80px 0; color:var(--gray); }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="container header-inner">
+    <a href="/" class="logo">Avdić<span>Media</span></a>
+    <nav class="nav">
+      <a href="/">Početna</a>
+      <a href="/blog.html">Blog</a>
+    </nav>
+  </div>
+</header>
+
+<section class="post-page">
+  <div class="container post-container">
+    <a href="/blog.html" class="back-link">← Nazad na blog</a>
+    <div id="postContent"></div>
+    <div id="postError" class="post-error" style="display:none">
+      <p>Članak nije pronađen.</p>
+      <a href="/blog.html" class="btn btn-primary" style="margin-top:16px;">Pregledaj blog</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <a href="/" class="logo">Avdić<span>Media</span></a>
+    <p>&copy; 2025 Avdić Media. Sva prava zadržana.</p>
+  </div>
+</footer>
+
+<script type="module" src="src/blog-post.js"></script>
+</body>
+</html>
