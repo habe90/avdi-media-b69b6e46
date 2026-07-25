@@ -3,8 +3,10 @@ import cors from 'cors';
 import pkg from 'pg';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
 
 const { Pool } = pkg;
 const __filename = fileURLToPath(import.meta.url);
@@ -49,6 +51,16 @@ await pool.query(`
     updated_at TIMESTAMPTZ DEFAULT NOW()
   )
 `);
+
+// --- Image upload ---
+const uploadsDir = join(__dirname, 'dist', 'uploads');
+if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  filename: (_req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.]/g, '_'))
+});
+const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
 // --- Auth middleware ---
 function auth(req, res, next) {
@@ -217,6 +229,12 @@ app.delete('/api/admin/posts/:id', auth, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Greška servera.' });
   }
+});
+
+// --- UPLOAD ---
+app.post('/api/upload', auth, upload.single('image'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Fajl nije uploadovan.' });
+  res.json({ url: '/uploads/' + req.file.filename });
 });
 
 // --- Root route ---
