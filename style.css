@@ -341,13 +341,26 @@ section{padding:100px 0;}
 .info-item{margin-bottom:12px;font-size:15px;}
 .socials{display:flex;gap:16px;margin-top:24px;}
 .socials a{
-  padding:10px 20px;
+  width:40px; /* Fiksna širina za krug */
+  height:40px; /* Fiksna visina za krug */
+  display:flex; /* Centriranje ikonice */
+  align-items:center;
+  justify-content:center;
   border:1px solid rgba(0,0,0,.15);
-  border-radius:50px;
-  font-size:14px;
-  font-weight:500;
+  border-radius:50%; /* Okrugli oblik */
+  font-size:18px; /* Veličina ikonice */
+  color:var(--dark); /* Boja ikonice */
+  transition:.3s ease;
 }
-.socials a:hover{background:var(--dark);color:var(--white);border-color:var(--dark);}
+.socials a:hover{
+  background:var(--dark);
+  color:var(--white);
+  border-color:var(--dark);
+}
+/* Dodatni stil za ikonice unutar linka */
+.socials a svg {
+  display: block;
+}
 
 .kontakt-form{
   background:var(--light-bg);
