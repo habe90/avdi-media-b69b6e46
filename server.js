@@ -45,10 +45,12 @@ db.exec(`
     FOREIGN KEY (author_id) REFERENCES users(id)
   );
 
-  -- Add columns if upgrading from older schema
-  ALTER TABLE posts ADD COLUMN meta_title TEXT DEFAULT '';
-  ALTER TABLE posts ADD COLUMN meta_description TEXT DEFAULT '';
+
 `);
+
+// Migrate existing tables (ignore errors if columns already exist)
+try { db.exec("ALTER TABLE posts ADD COLUMN meta_title TEXT DEFAULT ''"); } catch {}
+try { db.exec("ALTER TABLE posts ADD COLUMN meta_description TEXT DEFAULT ''"); } catch {}
 
 // --- Auth middleware ---
 function auth(req, res, next) {
