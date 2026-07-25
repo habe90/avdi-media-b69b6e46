@@ -10,7 +10,7 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Poppins',sans-serif;background:#f1f5f9;color:#1a1d1e;min-height:100vh;display:flex;}
-  
+
   /* SIDEBAR */
   .sidebar{
     width:260px;min-height:100vh;background:#1a1d1e;color:#fff;padding:0;position:fixed;
@@ -25,36 +25,33 @@
     text-decoration:none;font-size:14px;font-weight:500;transition:.2s;border-left:3px solid transparent;
   }
   .sidebar-nav a:hover,.sidebar-nav a.active{color:#fff;background:rgba(255,255,255,.06);border-left-color:#1db954;}
-  .sidebar-nav a svg{width:20px;height:20px;opacity:.7;}
-  .sidebar-nav a.active svg,.sidebar-nav a:hover svg{opacity:1;}
   .sidebar-footer{padding:16px 24px;border-top:1px solid rgba(255,255,255,.08);}
   .sidebar-user{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
   .sidebar-avatar{width:38px;height:38px;border-radius:50%;background:#1db954;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;}
-  .sidebar-user-info{flex:1;}
   .sidebar-user-info .uname{font-size:13px;font-weight:600;color:#fff;}
   .sidebar-user-info .uemail{font-size:11px;color:rgba(255,255,255,.45);}
   .btn-logout{display:block;width:100%;padding:10px;background:rgba(231,76,60,.15);color:#e74c3c;border:1px solid rgba(231,76,60,.25);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;font-family:inherit;transition:.2s;}
   .btn-logout:hover{background:rgba(231,76,60,.25);}
-  
+
   /* MAIN */
   .main{margin-left:260px;flex:1;min-height:100vh;transition:.3s;}
   .main-header{background:#fff;padding:18px 32px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
   .main-header h1{font-size:20px;font-weight:700;}
   .main-header .breadcrumb{font-size:13px;color:#6b7280;}
   .main-content{padding:32px;}
-  
-  /* CARDS */
+
+  /* STATS */
   .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px;}
   .stat-card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid #e2e8f0;}
   .stat-card .stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;}
-  .stat-card .stat-icon.green{background:rgba(29,185,84,.12);color:#1db954;}
-  .stat-card .stat-icon.blue{background:rgba(59,130,246,.12);color:#3b82f6;}
-  .stat-card .stat-icon.purple{background:rgba(139,92,246,.12);color:#8b5cf6;}
-  .stat-card .stat-icon.orange{background:rgba(249,115,22,.12);color:#f97316;}
+  .stat-icon.green{background:rgba(29,185,84,.12);color:#1db954;}
+  .stat-icon.blue{background:rgba(59,130,246,.12);color:#3b82f6;}
+  .stat-icon.purple{background:rgba(139,92,246,.12);color:#8b5cf6;}
+  .stat-icon.orange{background:rgba(249,115,22,.12);color:#f97316;}
   .stat-card .stat-num{font-size:28px;font-weight:700;}
   .stat-card .stat-label{font-size:13px;color:#6b7280;margin-top:4px;}
-  
-  /* POST FORM */
+
+  /* PANEL */
   .panel{background:#fff;border-radius:14px;padding:28px;box-shadow:0 1px 4px rgba(0,0,0,.04);border:1px solid #e2e8f0;margin-bottom:28px;}
   .panel h3{font-size:18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
@@ -62,8 +59,7 @@
   .form-group label{display:block;margin-bottom:6px;font-weight:500;font-size:13px;color:#374151;}
   .form-group input,.form-group textarea,.form-group select{width:100%;padding:11px 14px;border:1px solid #d1d5db;border-radius:10px;font-family:inherit;font-size:14px;transition:.2s;background:#fafbfc;}
   .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:#1db954;background:#fff;box-shadow:0 0 0 3px rgba(29,185,84,.1);}
-  .form-group textarea{resize:vertical;min-height:200px;line-height:1.7;}
-  .form-actions{display:flex;gap:12px;}
+
   .btn{padding:11px 24px;border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;border:none;font-family:inherit;transition:.2s;display:inline-flex;align-items:center;gap:8px;}
   .btn-primary{background:#1db954;color:#fff;}
   .btn-primary:hover{background:#149c46;}
@@ -72,8 +68,48 @@
   .btn-danger{background:#e74c3c;color:#fff;}
   .btn-danger:hover{background:#c0392b;}
   .btn-sm{padding:7px 14px;font-size:12px;border-radius:8px;}
-  
-  /* POST LIST TABLE */
+  .btn-icon{padding:8px 12px;border-radius:6px;font-size:13px;}
+
+  /* RICH TEXT EDITOR */
+  .editor-toolbar{
+    display:flex;flex-wrap:wrap;gap:4px;padding:10px 12px;background:#f8fafc;
+    border:1px solid #d1d5db;border-bottom:none;border-radius:10px 10px 0 0;
+  }
+  .editor-toolbar button{
+    padding:7px 12px;border:1px solid transparent;border-radius:6px;background:transparent;
+    cursor:pointer;font-size:13px;font-weight:600;color:#374151;font-family:inherit;transition:.15s;
+    display:inline-flex;align-items:center;gap:4px;
+  }
+  .editor-toolbar button:hover{background:#e2e8f0;border-color:#d1d5db;}
+  .editor-toolbar button.active{background:#1db954;color:#fff;border-color:#1db954;}
+  .editor-toolbar .sep{width:1px;background:#d1d5db;margin:2px 4px;}
+  .editor-area{
+    min-height:350px;padding:16px;border:1px solid #d1d5db;border-top:none;
+    border-radius:0 0 10px 10px;background:#fff;font-size:14px;line-height:1.8;outline:none;overflow-y:auto;
+  }
+  .editor-area:focus{border-color:#1db954;box-shadow:0 0 0 3px rgba(29,185,84,.1);}
+  .editor-area h2{font-size:24px;margin:16px 0 10px;}
+  .editor-area h3{font-size:20px;margin:14px 0 8px;}
+  .editor-area p{margin-bottom:12px;}
+  .editor-area ul,.editor-area ol{margin:8px 0;padding-left:24px;}
+  .editor-area blockquote{border-left:4px solid #1db954;padding:10px 16px;margin:12px 0;background:#f8fafc;border-radius:0 8px 8px 0;font-style:italic;}
+  .editor-area img{max-width:100%;border-radius:10px;margin:12px 0;}
+  .editor-area a{color:#1db954;text-decoration:underline;}
+
+  /* IMAGE UPLOAD */
+  .upload-zone{
+    border:2px dashed #d1d5db;border-radius:10px;padding:28px;text-align:center;
+    cursor:pointer;transition:.2s;background:#fafbfc;margin-bottom:16px;
+  }
+  .upload-zone:hover{border-color:#1db954;background:rgba(29,185,84,.03);}
+  .upload-zone .icon{font-size:36px;margin-bottom:8px;}
+  .upload-zone p{font-size:13px;color:#6b7280;}
+  .upload-preview{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;}
+  .upload-preview .thumb{position:relative;width:100px;height:100px;border-radius:10px;overflow:hidden;border:2px solid #1db954;}
+  .upload-preview .thumb img{width:100%;height:100%;object-fit:cover;}
+  .upload-preview .thumb .remove{position:absolute;top:2px;right:2px;width:20px;height:20px;background:#e74c3c;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:none;}
+
+  /* TABLE */
   .table-wrap{overflow-x:auto;}
   table{width:100%;border-collapse:collapse;}
   table th,table td{padding:14px 16px;text-align:left;font-size:14px;}
@@ -87,20 +123,22 @@
   .actions-cell button{padding:6px 10px;border-radius:6px;border:none;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;transition:.2s;}
   .btn-edit{background:rgba(29,185,84,.1);color:#1db954;}
   .btn-edit:hover{background:rgba(29,185,84,.2);}
-  
-  .msg{padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:16px;display:none;}
-  .msg.success{background:rgba(29,185,84,.1);color:#149c46;display:block;}
-  .msg.error{background:rgba(231,76,60,.1);color:#e74c3c;display:block;}
-  
   .empty-state{text-align:center;padding:60px 0;color:#6b7280;}
   .empty-state .icon{font-size:48px;margin-bottom:16px;}
-  
-  /* MODAL */
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;}
-  .modal-overlay.open{display:flex;}
-  .modal{background:#fff;border-radius:16px;padding:32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
-  .modal h3{margin-bottom:20px;}
-  
+
+  /* TOAST */
+  .toast-container{position:fixed;top:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:10px;}
+  .toast{
+    padding:14px 20px;border-radius:10px;color:#fff;font-weight:500;font-size:14px;
+    min-width:300px;max-width:420px;box-shadow:0 8px 30px rgba(0,0,0,.15);
+    animation:slideIn .3s ease;display:flex;align-items:center;gap:10px;
+  }
+  .toast.success{background:#1db954;}
+  .toast.error{background:#e74c3c;}
+  .toast.info{background:#3b82f6;}
+  @keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+  @keyframes slideOut{from{transform:translateX(0);opacity:1}to{transform:translateX(120%);opacity:0}}
+
   @media(max-width:768px){
     .sidebar{width:0;overflow:hidden;}
     .sidebar.open{width:260px;}
@@ -108,7 +146,6 @@
     .stats-grid{grid-template-columns:repeat(2,1fr);}
     .form-row{grid-template-columns:1fr;}
   }
-  
   .mobile-toggle{display:none;background:none;border:none;font-size:24px;cursor:pointer;padding:4px;}
   @media(max-width:768px){.mobile-toggle{display:block;}}
 </style>
@@ -119,22 +156,10 @@
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo"><a href="/">Avdić<span>Media</span></a></div>
   <nav class="sidebar-nav">
-    <a href="#" data-page="dashboard" class="active">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </a>
-    <a href="#" data-page="posts">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      Svi članci
-    </a>
-    <a href="#" data-page="new-post">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Novi članak
-    </a>
-    <a href="/" target="_blank">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      Pogledaj sajt
-    </a>
+    <a href="#" data-page="dashboard" class="active">📊 Dashboard</a>
+    <a href="#" data-page="posts">📋 Svi članci</a>
+    <a href="#" data-page="new-post">✍️ Novi članak</a>
+    <a href="/" target="_blank">🌐 Pogledaj sajt</a>
   </nav>
   <div class="sidebar-footer">
     <div class="sidebar-user">
@@ -144,9 +169,12 @@
         <div class="uemail" id="sidebarEmail">admin@avdic.com</div>
       </div>
     </div>
-    <button class="btn-logout" id="logoutBtn">Odjavi se</button>
+    <button class="btn-logout" id="logoutBtn">🚪 Odjavi se</button>
   </div>
 </aside>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- MAIN -->
 <div class="main">
@@ -160,10 +188,10 @@
     </div>
     <a href="/blog.html" class="btn btn-outline btn-sm" style="text-decoration:none;">📰 Blog</a>
   </header>
-  
+
   <div class="main-content">
-    
-    <!-- DASHBOARD PAGE -->
+
+    <!-- DASHBOARD -->
     <div id="page-dashboard">
       <div class="stats-grid">
         <div class="stat-card">
@@ -187,7 +215,6 @@
           <div class="stat-label">Autor</div>
         </div>
       </div>
-      
       <div class="panel">
         <h3>📋 Poslednji članci</h3>
         <div class="table-wrap">
@@ -201,8 +228,8 @@
         </div>
       </div>
     </div>
-    
-    <!-- POSTS LIST PAGE -->
+
+    <!-- ALL POSTS -->
     <div id="page-posts" style="display:none;">
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
@@ -220,31 +247,65 @@
         </div>
       </div>
     </div>
-    
-    <!-- NEW/EDIT POST PAGE -->
+
+    <!-- NEW/EDIT POST -->
     <div id="page-new-post" style="display:none;">
       <div class="panel">
         <h3 id="formTitle">✍️ Novi članak</h3>
-        <div class="msg" id="formMsg"></div>
         <input type="hidden" id="editId">
+
         <div class="form-group"><label>Naslov *</label><input type="text" id="title" placeholder="Unesite naslov članka..."></div>
+
         <div class="form-row">
-          <div class="form-group"><label>Kratak opis</label><input type="text" id="excerpt" placeholder="Kratak opis za preview karticu..."></div>
-          <div class="form-group"><label>URL slike</label><input type="text" id="image_url" placeholder="https://..."></div>
+          <div class="form-group"><label>Kratak opis (excerpt)</label><input type="text" id="excerpt" placeholder="Kratak opis za preview karticu..."></div>
+          <div class="form-group">
+            <label>📷 Glavna slika</label>
+            <div class="upload-zone" id="featuredUpload">
+              <div class="icon">📷</div>
+              <p>Kliknite ili prevucite sliku ovde</p>
+              <input type="file" accept="image/*" style="display:none;" id="featuredInput">
+            </div>
+            <div class="upload-preview" id="featuredPreview"></div>
+            <input type="hidden" id="image_url">
+          </div>
         </div>
+
         <div class="form-row">
           <div class="form-group"><label>🏷️ Meta Title (SEO naslov)</label><input type="text" id="meta_title" placeholder="SEO naslov stranice (50-60 karaktera)"></div>
           <div class="form-group"><label>📝 Meta Description (SEO opis)</label><input type="text" id="meta_description" placeholder="Kratak SEO opis za Google (120-155 karaktera)"></div>
         </div>
-        <div class="form-group"><label>Sadržaj (HTML) *</label><textarea id="content" placeholder="<h2>Naslov</h2><p>Tekst članka...</p>"></textarea></div>
-        <div class="form-actions">
+
+        <div class="form-group">
+          <label>Sadržaj *</label>
+          <div class="editor-toolbar" id="toolbar">
+            <button data-cmd="bold" title="Podebljano (Ctrl+B)"><b>B</b></button>
+            <button data-cmd="italic" title="Kurziv (Ctrl+I)"><i>I</i></button>
+            <span class="sep"></span>
+            <button data-cmd="formatBlock" data-val="h2" title="Naslov 2">H2</button>
+            <button data-cmd="formatBlock" data-val="h3" title="Naslov 3">H3</button>
+            <button data-cmd="formatBlock" data-val="p" title="Paragraf">P</button>
+            <span class="sep"></span>
+            <button data-cmd="insertUnorderedList" title="Lista">• Lista</button>
+            <button data-cmd="insertOrderedList" title="Numerisana lista">1. Lista</button>
+            <span class="sep"></span>
+            <button data-cmd="createLink" title="Link">🔗 Link</button>
+            <button data-cmd="formatBlock" data-val="blockquote" title="Citat">💬 Citat</button>
+            <span class="sep"></span>
+            <button id="btnInsertImage" title="Ubaci sliku">🖼️ Slika</button>
+            <input type="file" accept="image/*" id="inlineImageInput" style="display:none;">
+          </div>
+          <div class="editor-area" id="editor" contenteditable="true"></div>
+          <input type="hidden" id="content">
+        </div>
+
+        <div class="form-actions" style="display:flex;gap:12px;">
           <button class="btn btn-primary" id="saveBtn">💾 Objavi članak</button>
           <button class="btn btn-outline" id="saveDraftBtn">📋 Sačuvaj kao skicu</button>
           <button class="btn btn-outline" id="cancelBtn" style="display:none;">Odustani</button>
         </div>
       </div>
     </div>
-    
+
   </div>
 </div>
 
