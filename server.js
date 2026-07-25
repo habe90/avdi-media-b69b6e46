@@ -36,12 +36,18 @@ db.exec(`
     content TEXT NOT NULL,
     excerpt TEXT DEFAULT '',
     image_url TEXT DEFAULT '',
+    meta_title TEXT DEFAULT '',
+    meta_description TEXT DEFAULT '',
     author_id INTEGER NOT NULL,
     published INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (author_id) REFERENCES users(id)
   );
+
+  -- Add columns if upgrading from older schema
+  ALTER TABLE posts ADD COLUMN meta_title TEXT DEFAULT '';
+  ALTER TABLE posts ADD COLUMN meta_description TEXT DEFAULT '';
 `);
 
 // --- Auth middleware ---
@@ -120,14 +126,14 @@ app.get('/api/admin/posts', auth, (req, res) => {
 });
 
 app.post('/api/admin/posts', auth, (req, res) => {
-  const { title, content, excerpt, image_url } = req.body;
+  const { title, content, excerpt, image_url, meta_title, meta_description } = req.body;
   if (!title || !content) return res.status(400).json({ error: 'Naslov i sadržaj su obavezni.' });
   const slug = title.toLowerCase()
     .replace(/[čć]/g,'c').replace(/[š]/g,'s').replace(/[đ]/g,'d').replace(/[ž]/g,'z')
     .replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') + '-' + Date.now();
   const r = db.prepare(
-    'INSERT INTO posts (title, slug, content, excerpt, image_url, author_id) VALUES (?,?,?,?,?,?)'
-  ).run(title, slug, content, excerpt || '', image_url || '', req.user.id);
+    'INSERT INTO posts (title, slug, content, excerpt, image_url, meta_title, meta_description, author_id) VALUES (?,?,?,?,?,?,?,?)'
+  ).run(title, slug, content, excerpt || '', image_url || '', meta_title || '', meta_description || '', req.user.id);
   const post = db.prepare('SELECT * FROM posts WHERE id = ?').get(r.lastInsertRowid);
   res.status(201).json({ post });
 });
@@ -135,12 +141,13 @@ app.post('/api/admin/posts', auth, (req, res) => {
 app.put('/api/admin/posts/:id', auth, (req, res) => {
   const post = db.prepare('SELECT * FROM posts WHERE id = ? AND author_id = ?').get(req.params.id, req.user.id);
   if (!post) return res.status(404).json({ error: 'Post nije pronađen.' });
-  const { title, content, excerpt, image_url, published } = req.body;
+  const { title, content, excerpt, image_url, meta_title, meta_description, published } = req.body;
   db.prepare(`
-    UPDATE posts SET title=?, content=?, excerpt=?, image_url=?, published=?, updated_at=CURRENT_TIMESTAMP WHERE id=?
+    UPDATE posts SET title=?, content=?, excerpt=?, image_url=?, meta_title=?, meta_description=?, published=?, updated_at=CURRENT_TIMESTAMP WHERE id=?
   `).run(
     title ?? post.title, content ?? post.content, excerpt ?? post.excerpt,
-    image_url ?? post.image_url, published ?? post.published, req.params.id
+    image_url ?? post.image_url, meta_title ?? post.meta_title, meta_description ?? post.meta_description,
+    published ?? post.published, req.params.id
   );
   res.json({ post: db.prepare('SELECT * FROM posts WHERE id = ?').get(req.params.id) });
 });
