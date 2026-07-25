@@ -145,6 +145,28 @@
   .dropdown-menu button:hover{background:#f1f5f9;}
   .dropdown-menu button.danger{color:#e74c3c;}
   .dropdown-menu button.danger:hover{background:rgba(231,76,60,.08);}
+
+  /* DROPDOWN */
+  .dropdown{position:relative;display:inline-block;}
+  .btn-more{
+    padding:6px 10px;border-radius:6px;border:1px solid #d1d5db;background:#fafbfc;
+    cursor:pointer;font-family:inherit;display:flex;align-items:center;transition:.2s;color:#374151;
+  }
+  .btn-more:hover{background:#e2e8f0;border-color:#9ca3af;}
+  .dropdown-menu{
+    position:absolute;right:0;top:100%;margin-top:4px;background:#fff;border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,.12);border:1px solid #e2e8f0;min-width:150px;z-index:50;
+    display:none;overflow:hidden;padding:6px;
+  }
+  .dropdown-menu.show{display:block;}
+  .dropdown-menu button{
+    display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;
+    border-radius:6px;background:transparent;cursor:pointer;font-family:inherit;font-size:13px;
+    font-weight:500;color:#374151;transition:.15s;
+  }
+  .dropdown-menu button:hover{background:#f1f5f9;}
+  .dropdown-menu button.danger{color:#e74c3c;}
+  .dropdown-menu button.danger:hover{background:rgba(231,76,60,.08);}
   .empty-state{text-align:center;padding:60px 0;color:#6b7280;}
   .empty-state .icon{font-size:48px;margin-bottom:16px;}
 
