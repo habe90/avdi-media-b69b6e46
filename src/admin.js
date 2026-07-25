@@ -291,13 +291,25 @@ async function loadRecentPosts() {
         <td><span class="badge ${p.published ? 'badge-pub' : 'badge-draft'}">${p.published ? 'Objavljen' : 'Skica'}</span></td>
         <td style="color:#6b7280;font-size:13px;">${new Date(p.created_at).toLocaleDateString('bs')}</td>
         <td class="actions-cell">
-          <button class="btn-edit" data-id="${p.id}">✏️ Uredi</button>
-          <button class="btn-del" data-id="${p.id}" style="background:rgba(231,76,60,.1);color:#e74c3c;">🗑</button>
+          <div class="dropdown">
+            <button class="btn-more" data-dropdown="${p.id}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </button>
+            <div class="dropdown-menu" id="dm-${p.id}">
+              <button data-action="edit" data-id="${p.id}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Uredi
+              </button>
+              <button data-action="delete" data-id="${p.id}" class="danger">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Obriši
+              </button>
+            </div>
+          </div>
         </td>
       </tr>
     `).join('');
-    tbody.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', () => editPostById(posts, b.dataset.id)));
-    tbody.querySelectorAll('.btn-del').forEach(b => b.addEventListener('click', () => deletePostById(b.dataset.id)));
+    initDropdowns(posts);
   } catch {}
 }
 
@@ -315,13 +327,25 @@ async function loadAllPosts() {
         <td><span class="badge ${p.published ? 'badge-pub' : 'badge-draft'}">${p.published ? 'Objavljen' : 'Skica'}</span></td>
         <td style="color:#6b7280;font-size:13px;">${new Date(p.created_at).toLocaleDateString('bs')}</td>
         <td class="actions-cell">
-          <button class="btn-edit" data-id="${p.id}">✏️ Uredi</button>
-          <button class="btn-del" data-id="${p.id}" style="background:rgba(231,76,60,.1);color:#e74c3c;">🗑</button>
+          <div class="dropdown">
+            <button class="btn-more" data-dropdown="${p.id}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+            </button>
+            <div class="dropdown-menu" id="dm-${p.id}">
+              <button data-action="edit" data-id="${p.id}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Uredi
+              </button>
+              <button data-action="delete" data-id="${p.id}" class="danger">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Obriši
+              </button>
+            </div>
+          </div>
         </td>
       </tr>
     `).join('');
-    tbody.querySelectorAll('.btn-edit').forEach(b => b.addEventListener('click', () => editPostById(posts, b.dataset.id)));
-    tbody.querySelectorAll('.btn-del').forEach(b => b.addEventListener('click', () => deletePostById(b.dataset.id)));
+    initDropdowns(posts);
   } catch {}
 }
 
@@ -411,6 +435,33 @@ function resetForm() {
   document.getElementById('cancelBtn').style.display = 'none';
   document.getElementById('pageTitle').textContent = 'Novi članak';
   document.getElementById('breadcrumb').textContent = 'Kreirajte novi blog post';
+}
+
+// --- DROPDOWN ---
+function initDropdowns(posts) {
+  // Close all dropdowns on outside click
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+    }
+  });
+
+  document.querySelectorAll('.btn-more').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.dropdown;
+      // Close all others
+      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+      document.getElementById(`dm-${id}`).classList.toggle('show');
+    });
+  });
+
+  document.querySelectorAll('.dropdown-menu button[data-action="edit"]').forEach(b => {
+    b.addEventListener('click', () => editPostById(posts, b.dataset.id));
+  });
+  document.querySelectorAll('.dropdown-menu button[data-action="delete"]').forEach(b => {
+    b.addEventListener('click', () => deletePostById(b.dataset.id));
+  });
 }
 
 async function deletePostById(id) {
