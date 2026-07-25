@@ -7,9 +7,13 @@ async function loadPosts() {
     const res = await fetch(`${API}/api/posts`);
     const data = await res.json();
     if (!data.posts || data.posts.length === 0) { empty.style.display = 'block'; return; }
-    grid.innerHTML = data.posts.map(p => `
+    grid.innerHTML = data.posts.map(p => {
+      const imgHtml = p.image_url
+        ? `<div class="post-card-img"><img src="${p.image_url}" alt="${escapeHtml(p.title)}" loading="lazy"></div>`
+        : `<div class="post-card-img no-img">📰</div>`;
+      return `
       <article class="post-card">
-        <div class="post-card-img">📰</div>
+        ${imgHtml}
         <div class="post-card-body">
           <h3><a href="/blog-post.html?slug=${p.slug}">${escapeHtml(p.title)}</a></h3>
           <p class="excerpt">${escapeHtml(p.excerpt || '')}</p>
@@ -18,8 +22,8 @@ async function loadPosts() {
             <time>${new Date(p.created_at).toLocaleDateString('bs')}</time>
           </div>
         </div>
-      </article>
-    `).join('');
+      </article>`;
+    }).join('');
     empty.style.display = 'none';
   } catch { empty.style.display = 'block'; empty.innerHTML = '<div class="icon">⚠️</div><p>Greška pri učitavanju članaka.</p>'; }
 }
