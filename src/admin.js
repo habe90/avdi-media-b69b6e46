@@ -437,30 +437,47 @@ function resetForm() {
   document.getElementById('breadcrumb').textContent = 'Kreirajte novi blog post';
 }
 
-// --- DROPDOWN ---
+// --- DROPDOWN (event delegacija — radi uvek) ---
+let dropdownInitDone = false;
+let cachedPosts = [];
+
 function initDropdowns(posts) {
-  // Close all dropdowns on outside click
+  if (posts) cachedPosts = posts;
+  if (dropdownInitDone) return;
+  dropdownInitDone = true;
+
+  // Zatvori sve dropdowne na klik van
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.dropdown')) {
       document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
     }
   });
 
-  document.querySelectorAll('.btn-more').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+  // Delegacija: svaki klik na .btn-more ili dropdown dugme
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-more');
+    if (btn) {
       e.stopPropagation();
       const id = btn.dataset.dropdown;
-      // Close all others
       document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
-      document.getElementById(`dm-${id}`).classList.toggle('show');
-    });
-  });
+      const menu = document.getElementById('dm-' + id);
+      if (menu) menu.classList.toggle('show');
+      return;
+    }
 
-  document.querySelectorAll('.dropdown-menu button[data-action="edit"]').forEach(b => {
-    b.addEventListener('click', () => editPostById(posts, b.dataset.id));
-  });
-  document.querySelectorAll('.dropdown-menu button[data-action="delete"]').forEach(b => {
-    b.addEventListener('click', () => deletePostById(b.dataset.id));
+    const editBtn = e.target.closest('.dropdown-menu button[data-action="edit"]');
+    if (editBtn) {
+      const pid = editBtn.dataset.id;
+      const post = cachedPosts.find(p => p.id == pid);
+      if (post) editPostById(cachedPosts, pid);
+      return;
+    }
+
+    const delBtn = e.target.closest('.dropdown-menu button[data-action="delete"]');
+    if (delBtn) {
+      deletePostById(delBtn.dataset.id);
+      return;
+    }
   });
 }
 
