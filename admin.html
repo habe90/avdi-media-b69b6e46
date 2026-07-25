@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ba">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin CMS | Avdić Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .admin-page { padding:120px 0 80px; min-height:100vh; background:var(--light-bg); }
+  .admin-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+  .admin-top h2 { font-size:26px; }
+  .admin-top .user-info { font-size:14px; color:var(--gray); }
+  .admin-grid { display:grid; grid-template-columns:300px 1fr; gap:32px; }
+  .post-form { background:var(--white); padding:28px; border-radius:var(--radius); box-shadow:var(--shadow); height:fit-content; position:sticky; top:100px; }
+  .post-form h3 { margin-bottom:18px; font-size:18px; }
+  .post-form .field { margin-bottom:14px; }
+  .post-form label { display:block; margin-bottom:5px; font-weight:500; font-size:13px; }
+  .post-form input, .post-form textarea { width:100%; padding:10px 12px; border:1px solid rgba(0,0,0,.12); border-radius:8px; font-family:inherit; font-size:13px; }
+  .post-form input:focus, .post-form textarea:focus { outline:none; border-color:var(--green); }
+  .post-form .btn { width:100%; }
+  .post-form .btn-cancel { background:transparent; color:var(--gray); border:1px solid rgba(0,0,0,.15); margin-top:8px; }
+  .post-list h3 { margin-bottom:16px; font-size:18px; }
+  .post-item { background:var(--white); padding:18px 20px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+  .post-item .info { flex:1; }
+  .post-item .info strong { display:block; margin-bottom:4px; }
+  .post-item .info .s { font-size:12px; color:var(--gray); }
+  .post-item .actions { display:flex; gap:8px; }
+  .post-item .actions button { padding:6px 12px; border-radius:6px; border:none; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .btn-edit { background:var(--green); color:var(--white); }
+  .btn-del { background:#e74c3c; color:var(--white); }
+  .btn-sm { padding:8px 16px; border-radius:8px; border:none; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .status-badge { font-size:11px; padding:3px 8px; border-radius:20px; font-weight:600; }
+  .status-pub { background:rgba(29,185,84,.15); color:var(--green); }
+  .status-draft { background:rgba(107,114,128,.15); color:var(--gray); }
+  .msg { font-size:13px; min-height:18px; margin-bottom:8px; }
+  .msg.error { color:#e74c3c; }
+  .msg.success { color:var(--green); }
+  @media(max-width:768px){ .admin-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<section class="admin-page" id="adminPage" style="display:none">
+  <div class="container">
+    <div class="admin-top">
+      <h2>🛠 Admin CMS</h2>
+      <div class="user-info">Prijavljeni ste kao <strong id="userName"></strong> — <a href="#" id="logoutBtn" style="color:#e74c3c;">Odjavi se</a></div>
+    </div>
+    <div class="admin-grid">
+      <!-- Forma -->
+      <div class="post-form">
+        <h3 id="formTitle">✍️ Novi članak</h3>
+        <div class="msg" id="formMsg"></div>
+        <input type="hidden" id="editId">
+        <div class="field"><label>Naslov *</label><input type="text" id="title" placeholder="Naslov članka"></div>
+        <div class="field"><label>Kratak opis</label><input type="text" id="excerpt" placeholder="Kratak opis za karticu..."></div>
+        <div class="field"><label>URL slike</label><input type="text" id="image_url" placeholder="https://..."></div>
+        <div class="field"><label>Sadržaj (HTML) *</label><textarea id="content" rows="10" placeholder="<p>Tekst članka...</p>"></textarea></div>
+        <button class="btn btn-primary" id="saveBtn">💾 Objavi članak</button>
+        <button class="btn btn-cancel" id="cancelBtn" style="display:none">Odustani</button>
+      </div>
+      <!-- Lista postova -->
+      <div class="post-list">
+        <h3>📋 Vaši članci</h3>
+        <div id="postList"></div>
+        <div id="emptyList" style="display:none;text-align:center;padding:40px;color:var(--gray);">Još nema članaka. Napišite prvi!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Neautorizovani ekran -->
+<div id="unauth" style="display:none;min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <p style="font-size:18px;color:var(--gray);">🔒 Morate se prijaviti za pristup CMS-u.</p>
+  <a href="/login.html" class="btn btn-primary">Prijavi se</a>
+</div>
+
+<script type="module" src="src/admin.js"></script>
+</body>
+</html>
