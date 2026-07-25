@@ -437,49 +437,49 @@ function resetForm() {
   document.getElementById('breadcrumb').textContent = 'Kreirajte novi blog post';
 }
 
-// --- DROPDOWN (event delegacija — radi uvek) ---
-let dropdownInitDone = false;
+// --- DROPDOWN (event delegacija) ---
 let cachedPosts = [];
 
 function initDropdowns(posts) {
   if (posts) cachedPosts = posts;
-  if (dropdownInitDone) return;
-  dropdownInitDone = true;
-
-  // Zatvori sve dropdowne na klik van
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
-    }
-  });
-
-  // Delegacija: svaki klik na .btn-more ili dropdown dugme
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-more');
-    if (btn) {
-      e.stopPropagation();
-      const id = btn.dataset.dropdown;
-      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
-      const menu = document.getElementById('dm-' + id);
-      if (menu) menu.classList.toggle('show');
-      return;
-    }
-
-    const editBtn = e.target.closest('.dropdown-menu button[data-action="edit"]');
-    if (editBtn) {
-      const pid = editBtn.dataset.id;
-      const post = cachedPosts.find(p => p.id == pid);
-      if (post) editPostById(cachedPosts, pid);
-      return;
-    }
-
-    const delBtn = e.target.closest('.dropdown-menu button[data-action="delete"]');
-    if (delBtn) {
-      deletePostById(delBtn.dataset.id);
-      return;
-    }
-  });
 }
+
+// Jedan globalni click listener
+document.addEventListener('click', function(e) {
+  // Klik na ⋮ dugme — otvori/zatvori meni
+  const moreBtn = e.target.closest('.btn-more');
+  if (moreBtn) {
+    const id = moreBtn.dataset.dropdown;
+    const menu = document.getElementById('dm-' + id);
+    const isOpen = menu && menu.classList.contains('show');
+    // Zatvori sve
+    document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+    // Ako nije bio otvoren — otvori ga
+    if (menu && !isOpen) menu.classList.add('show');
+    return;
+  }
+
+  // Klik na Uredi
+  const editBtn = e.target.closest('.dropdown-menu button[data-action="edit"]');
+  if (editBtn) {
+    const pid = editBtn.dataset.id;
+    const post = cachedPosts.find(p => p.id == pid);
+    if (post) editPostById(cachedPosts, pid);
+    return;
+  }
+
+  // Klik na Obriši
+  const delBtn = e.target.closest('.dropdown-menu button[data-action="delete"]');
+  if (delBtn) {
+    deletePostById(delBtn.dataset.id);
+    return;
+  }
+
+  // Klik bilo gde van dropdowna — zatvori sve
+  if (!e.target.closest('.dropdown')) {
+    document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+  }
+});
 
 async function deletePostById(id) {
   if (!confirm('Sigurno želite obrisati ovaj članak? Ova akcija je nepovratna.')) return;
