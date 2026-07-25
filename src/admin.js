@@ -56,7 +56,7 @@ function redirectLogin() {
   document.body.innerHTML = `
     <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;font-family:Poppins,sans-serif;background:#f1f5f9;">
       <div style="background:#fff;padding:48px 40px;border-radius:16px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.08);max-width:420px;">
-        <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+        <div style="font-size:48px;margin-bottom:16px;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1db954" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <h2 style="margin-bottom:8px;">Pristup odbijen</h2>
         <p style="color:#6b7280;margin-bottom:24px;">Morate se prijaviti za pristup CMS panelu.</p>
         <a href="/login.html" style="display:inline-block;padding:12px 32px;background:#1db954;color:#fff;border-radius:10px;font-weight:600;text-decoration:none;">Prijavi se</a>
@@ -410,7 +410,7 @@ function editPostById(posts, id) {
       </div>`;
   }
 
-  document.getElementById('formTitle').textContent = '✏️ Uredi članak';
+  document.getElementById('formTitle').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Uredi članak';
   document.getElementById('cancelBtn').style.display = 'inline-flex';
   document.getElementById('pageTitle').textContent = 'Uredi članak';
   document.getElementById('breadcrumb').textContent = 'Izmena postojećeg članka';
@@ -431,7 +431,7 @@ function resetForm() {
   document.getElementById('meta_description').value = '';
   document.getElementById('featuredPreview').innerHTML = '';
   featuredUrl = '';
-  document.getElementById('formTitle').textContent = '✍️ Novi članak';
+  document.getElementById('formTitle').innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Novi članak';
   document.getElementById('cancelBtn').style.display = 'none';
   document.getElementById('pageTitle').textContent = 'Novi članak';
   document.getElementById('breadcrumb').textContent = 'Kreirajte novi blog post';
