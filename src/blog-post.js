@@ -20,12 +20,18 @@ async function loadPost() {
         document.head.appendChild(meta);
       }
     }
+
+    const imgHtml = post.image_url
+      ? `<div class="post-featured-img"><img src="${post.image_url}" alt="${escapeHtml(post.title)}"></div>`
+      : '';
+
     content.innerHTML = `
       <h1>${escapeHtml(post.title)}</h1>
       <div class="post-meta">
         <span>${escapeHtml(post.author_name)}</span>
         <time>${new Date(post.created_at).toLocaleDateString('bs')}</time>
       </div>
+      ${imgHtml}
       <div class="post-content">${post.content}</div>
     `;
     error.style.display = 'none';
