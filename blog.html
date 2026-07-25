@@ -4,38 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog | Avdić Media</title>
+<meta name="description" content="Najnoviji članci i saveti o social media marketingu, reels produkciji i Meta Ads kampanjama.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  .blog-page { padding:140px 0 100px; background:var(--light-bg); min-height:100vh; }
-  .blog-page .section-title { text-align:center; }
-  .blog-page .section-sub { text-align:center; margin-left:auto; margin-right:auto; }
-  .posts-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:40px; }
-  .post-card { background:var(--white); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:.3s; border:1px solid rgba(0,0,0,.05); }
-  .post-card:hover { transform:translateY(-6px); }
-  .post-card-img { height:200px; background:var(--green); display:flex; align-items:center; justify-content:center; color:var(--white); font-size:40px; }
-  .post-card-body { padding:24px; }
-  .post-card-body h3 { font-size:18px; margin-bottom:8px; }
-  .post-card-body h3 a { color:var(--dark); }
-  .post-card-body h3 a:hover { color:var(--green); }
-  .post-card-body .excerpt { color:var(--gray); font-size:14px; margin-bottom:16px; line-height:1.6; }
-  .post-card-body .meta { font-size:12px; color:var(--gray); display:flex; justify-content:space-between; align-items:center; }
-  .post-card-body .meta span { color:var(--green); font-weight:600; }
-  .empty { text-align:center; padding:60px 0; color:var(--gray); }
-  .empty .icon { font-size:48px; margin-bottom:16px; }
-  @media(max-width:900px){ .posts-grid{grid-template-columns:1fr;} }
+  .blog-page{padding:140px 0 100px;background:var(--light-bg);min-height:100vh;}
+  .blog-page .section-title{text-align:center;}
+  .blog-page .section-sub{text-align:center;margin-left:auto;margin-right:auto;}
+  .posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:40px;}
+  .post-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);transition:.3s;border:1px solid rgba(0,0,0,.05);}
+  .post-card:hover{transform:translateY(-6px);}
+  .post-card-img{height:200px;background:linear-gradient(135deg,var(--green),var(--green-dark));display:flex;align-items:center;justify-content:center;color:var(--white);font-size:40px;}
+  .post-card-body{padding:24px;}
+  .post-card-body h3{font-size:18px;margin-bottom:8px;}
+  .post-card-body h3 a{color:var(--dark);}
+  .post-card-body h3 a:hover{color:var(--green);}
+  .post-card-body .excerpt{color:var(--gray);font-size:14px;margin-bottom:16px;line-height:1.6;}
+  .post-card-body .meta{font-size:12px;color:var(--gray);display:flex;justify-content:space-between;align-items:center;}
+  .post-card-body .meta span{color:var(--green);font-weight:600;}
+  .empty{text-align:center;padding:60px 0;color:var(--gray);}
+  .empty .icon{font-size:48px;margin-bottom:16px;}
+  @media(max-width:900px){.posts-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
+
 <header class="header" id="header">
   <div class="container header-inner">
     <a href="/" class="logo">Avdić<span>Media</span></a>
-    <nav class="nav">
+    <nav class="nav" id="nav">
       <a href="/">Početna</a>
-      <a href="/blog.html">Blog</a>
+      <a href="/#usluge">Usluge</a>
+      <a href="/#onama">O nama</a>
+      <a href="/#portfolio">Proces</a>
+      <a href="/blog.html" style="color:var(--green);font-weight:600;">Blog</a>
+      <a href="/#kontakt">Kontakt</a>
     </nav>
-    <a href="/login.html" class="btn btn-primary nav-cta" id="adminLink">CMS Prijava</a>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <a href="/login.html" class="btn btn-primary nav-cta">CMS Prijava</a>
+      <button class="burger" id="burger" aria-label="Meni">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -47,7 +58,7 @@
     <div class="posts-grid" id="postsGrid"></div>
     <div class="empty" id="empty" style="display:none">
       <div class="icon">📝</div>
-      <p>Još uvek nema objavljenih članaka.</p>
+      <p>Još uvek nema objavljenih članaka. Uskoro!</p>
     </div>
   </div>
 </section>
@@ -55,10 +66,16 @@
 <footer class="footer">
   <div class="container footer-inner">
     <a href="/" class="logo">Avdić<span>Media</span></a>
-    <p>&copy; 2025 Avdić Media. Sva prava zadržana.</p>
+    <p>&copy; <span id="year"></span> Avdić Media. Sva prava zadržana.</p>
   </div>
 </footer>
 
+<script>
+  // Mobile nav toggle
+  document.getElementById('burger').addEventListener('click',()=>{document.getElementById('nav').classList.toggle('open')});
+  document.querySelectorAll('.nav a').forEach(l=>l.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+  document.getElementById('year').textContent=new Date().getFullYear();
+</script>
 <script type="module" src="src/blog.js"></script>
 </body>
 </html>
