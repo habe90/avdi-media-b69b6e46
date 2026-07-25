@@ -19,14 +19,37 @@ function showToast(msg, type = 'success') {
 // --- AUTH ---
 async function checkAuth() {
   if (!token) { redirectLogin(); return; }
+
+  // Pokušaj sa keširanim user podacima dok server ne odgovori
+  const cached = localStorage.getItem('avdic_user');
+  if (cached) {
+    try { user = JSON.parse(cached); } catch {}
+  }
+
   try {
     const res = await fetch(`${API}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) { localStorage.removeItem('avdic_token'); localStorage.removeItem('avdic_user'); redirectLogin(); return; }
+    if (res.status === 401) {
+      // Samo ako je token stvarno istekao — briši i traži login
+      localStorage.removeItem('avdic_token');
+      localStorage.removeItem('avdic_user');
+      redirectLogin();
+      return;
+    }
+    if (!res.ok) {
+      // Server nije dostupan (502, 500...) — koristi keširane podatke
+      if (cached) { user = JSON.parse(cached); initUI(); showToast('Server trenutno nije dostupan. Koriste se keširani podaci.', 'info'); }
+      else { showToast('Nije moguće povezati se sa serverom. Pokušajte ponovo.', 'error'); }
+      return;
+    }
     const data = await res.json();
     user = data.user;
     localStorage.setItem('avdic_user', JSON.stringify(user));
     initUI();
-  } catch { redirectLogin(); }
+  } catch {
+    // Mrežna greška — ako imamo keš, koristi ga
+    if (cached) { user = JSON.parse(cached); initUI(); }
+    else { showToast('Nije moguće povezati se sa serverom.', 'error'); }
+  }
 }
 
 function redirectLogin() {
